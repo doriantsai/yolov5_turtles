@@ -30,13 +30,17 @@ class Albumentations:
 
             T = [
                 A.RandomResizedCrop(height=size, width=size, scale=(0.8, 1.0), ratio=(0.9, 1.11), p=0.0),
-                A.Blur(p=0.01),
-                A.MedianBlur(p=0.01),
-                A.ToGray(p=0.01),
-                A.CLAHE(p=0.01),
-                A.RandomBrightnessContrast(p=0.0),
-                A.RandomGamma(p=0.0),
-                A.ImageCompression(quality_lower=75, p=0.0)]  # transforms
+                A.Blur(p=0.1, blur_limit=7), #p=0.1
+                A.MedianBlur(p=0.1, blur_limit=[3,7]), #p=0.01, blur_limit=[3,7]
+                A.CLAHE(p=0.01), #p=0.01
+                A.RandomBrightnessContrast(p=0.1,brightness_limit=0.5,contrast_limit=0.5),#p=0.1
+                A.RandomGamma(p=0.01),#p=0.1
+                A.ColorJitter(brightness=0.02, contrast=0.02, saturation=0.02, hue=0.1, p=0.5), #0.2, 0.1, 0.1, 0.1, 0.5 max
+                A.HorizontalFlip(p=0.1), #p=0.5
+                A.VerticalFlip(p=0.1),
+                A.ImageCompression(quality_lower=95, p=0.0),
+                A.ToGray(p=0.01) #p=0.01
+                ]  # transforms
             self.transform = A.Compose(T, bbox_params=A.BboxParams(format='yolo', label_fields=['class_labels']))
 
             LOGGER.info(prefix + ', '.join(f'{x}'.replace('always_apply=False, ', '') for x in T if x.p))
